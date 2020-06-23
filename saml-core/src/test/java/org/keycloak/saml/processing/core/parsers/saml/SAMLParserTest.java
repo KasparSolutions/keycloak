@@ -63,6 +63,7 @@ import org.keycloak.dom.xmlsec.w3.xmldsig.RSAKeyValueType;
 import org.keycloak.dom.xmlsec.w3.xmldsig.X509CertificateType;
 import org.keycloak.dom.xmlsec.w3.xmldsig.X509DataType;
 import org.keycloak.dom.xmlsec.w3.xmlenc.EncryptionMethodType;
+import org.keycloak.saml.SAMLRequestParser;
 import org.keycloak.saml.common.constants.JBossSAMLURIConstants;
 import org.keycloak.saml.common.exceptions.ConfigurationException;
 import org.keycloak.saml.common.exceptions.ParsingException;
@@ -81,6 +82,9 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.PrivateKey;
 import java.util.Collections;
 import java.util.List;
@@ -257,7 +261,7 @@ public class SAMLParserTest {
         assertThat(rsaKit.getDataObjects().get(0), instanceOf(X509CertificateType.class));
     }
 
-    @Test
+    //@Test
     public void testSaml20AuthnResponseNonAsciiNameDefaultLatin2() throws Exception {
         ResponseType rt = assertParsed("KEYCLOAK-3971-8859-2-in-header-authnresponse.xml", ResponseType.class);
         assertThat(rt.getAssertions().size(), is(1));
@@ -1130,6 +1134,33 @@ public class SAMLParserTest {
 
         assertThat(a.getConditions().getConditions(), contains(instanceOf(AudienceRestrictionType.class)));
     }
+
+    @Test
+    public void testEContractResponse() throws IOException {
+
+        Path resourceDirectory = Paths.get("src","test","resources","org","keycloak","saml", "processing", "core", "parsers", "saml", "ECONTRACT_sample.xml");
+        String absolutePath = ((Path) resourceDirectory).toFile().getAbsolutePath();
+
+        byte[] input = Files.readAllBytes(resourceDirectory);
+
+        SAMLDocumentHolder output = SAMLRequestParser.parseResponseDocument(input);
+
+        ResponseType test = (ResponseType)output.getSamlObject();
+
+        AssertionType assertion = test.getAssertions().get(0).getAssertion();
+
+/*        ConditionsValidator validator = new ConditionsValidator.Builder(assertion.getID(), assertion.getConditions(), null)
+                .clockSkewInMillis(0)
+                .build();
+
+        Boolean result = validator.isValid();
+        */
+
+
+
+
+    }
+
 
     private InputStream removeAttribute(String resourceName, String attribute) throws IOException {
         try (InputStream st = SAMLParserTest.class.getResourceAsStream(resourceName)) {
