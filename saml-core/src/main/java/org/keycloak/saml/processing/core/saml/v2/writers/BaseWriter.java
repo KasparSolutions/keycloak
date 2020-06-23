@@ -173,7 +173,11 @@ public class BaseWriter {
                     } else if (attributeValue instanceof NameIDType) {
                     	writeNameIDTypeAttributeValue((NameIDType) attributeValue);
                     } else
-                        throw logger.writerUnsupportedAttributeValueError(attributeValue.getClass().getName());
+                        logger.info("Unsupported Attribute value (" + attributeValue.toString() + ")");
+                        // unsupported attribute values.
+                        // throw logger.writerUnsupportedAttributeValueError(attributeValue.getClass().getName());
+                        // Removed hard throw to prevent the entire SAML stack from crashing on unknown
+                        // attribute types. We get, for instance, dates (XMLGregorian...)
                 } else {
                     writeStringAttributeValue(null);
                 }
