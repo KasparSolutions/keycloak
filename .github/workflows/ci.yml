@@ -49,3 +49,5 @@ jobs:
         run: mvn clean install -B -Pauth-server-wildfly -DskipTests -f testsuite/pom.xml
       - name: Run base tests
         run: mvn clean install -B -Pauth-server-wildfly -f testsuite/integration-arquillian/tests/base/pom.xml | misc/log/trimmer.sh; exit ${PIPESTATUS[0]}
+
+        
