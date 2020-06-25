@@ -18,6 +18,9 @@ ENV PROXY_ADDRESS_FORWARDING false
 ENV JBOSS_HOME /opt/jboss/keycloak
 ENV LANG en_US.UTF-8
 
+USER root
+RUN microdnf update -y && microdnf install -y glibc-langpack-en gzip hostname java-11-openjdk-headless openssl tar which && microdnf clean all
+
 COPY --from=build-env /output/keycloak-* /opt/jboss/keycloak
 ADD build-tools /opt/jboss/tools
 RUN /opt/jboss/tools/build-keycloak.sh
