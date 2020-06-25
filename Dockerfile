@@ -3,7 +3,7 @@ WORKDIR /app
 COPY . .
 RUN mvn -Pdistribution -pl distribution/server-dist -am -Dmaven.test.skip clean install
 WORKDIR /output
-RUN tar xfz /output/distribution/server-dist/target/keycloak-*.tar.gz
+RUN tar xfz /app/distribution/server-dist/target/keycloak-*.tar.gz
 
 FROM registry.access.redhat.com/ubi8-minimal
 
@@ -18,7 +18,7 @@ ENV PROXY_ADDRESS_FORWARDING false
 ENV JBOSS_HOME /opt/jboss/keycloak
 ENV LANG en_US.UTF-8
 
-COPY --from=build-env /output /opt/jboss/keycloak
+COPY --from=build-env /output/keycloak-* /opt/jboss/keycloak
 ADD build-tools /opt/jboss/tools
 RUN /opt/jboss/tools/build-keycloak.sh
 
